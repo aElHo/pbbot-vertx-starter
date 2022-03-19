@@ -1,0 +1,6 @@
+{
+  "port": 8081,
+  "plugin": [
+    "com.elho.pbbot.plugin.HelloPlugin"
+  ]
+}
