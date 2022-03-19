@@ -6,9 +6,9 @@ import com.elho.pbbot.handler.FrameHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.MultiMap;
 import io.vertx.core.http.ServerWebSocket;
-import io.vertx.core.impl.logging.Logger;
-import io.vertx.core.impl.logging.LoggerFactory;
 import io.vertx.core.json.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author zyf
@@ -25,7 +25,7 @@ public class SockerVerticle extends AbstractVerticle {
             MultiMap headers = websocket.headers();
             String selfId = headers.get("x-self-id");
             if ("/ws/cq/".equals(websocket.path()) && !"0".equals(selfId)) {
-                logger.info(selfId + " connected");
+                logger.info( "{} connected",selfId);
                 BotContainer.INSTANCE.addBot(Long.valueOf(selfId), createBot(selfId, websocket));
                 websocket.handler(buffer -> {
                     try {
@@ -37,10 +37,10 @@ public class SockerVerticle extends AbstractVerticle {
                 });
             }
             websocket.closeHandler(handle -> {
-                logger.info(selfId + " disconnected");
+                logger.info( "{} disconnected",selfId);
                 BotContainer.INSTANCE.removeBot(Long.valueOf(selfId));
             });
-        }).listen(port, r -> logger.info("started on " + port));
+        }).listen(port, r -> logger.info("started on {}", port ));
     }
 
     private Bot createBot(String selfId, ServerWebSocket websocket) {
