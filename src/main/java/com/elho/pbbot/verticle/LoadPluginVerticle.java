@@ -2,7 +2,6 @@ package com.elho.pbbot.verticle;
 
 import cn.hutool.core.util.ClassLoaderUtil;
 import cn.hutool.core.util.ClassUtil;
-import com.elho.MainVerticle;
 import com.elho.pbbot.bot.BotPlugin;
 import com.elho.pbbot.bot.PluginContainer;
 import io.vertx.core.AbstractVerticle;
