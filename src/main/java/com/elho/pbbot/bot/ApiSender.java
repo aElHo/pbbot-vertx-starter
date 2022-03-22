@@ -13,7 +13,7 @@ import onebot.OnebotFrame;
  */
 public class ApiSender {
 
-    private Object callApi(ServerWebSocket webSocket, Long botId, MessageLiteOrBuilder apiReq) {
+    private String callApi(ServerWebSocket webSocket, Long botId, MessageLiteOrBuilder apiReq) {
         String echo = UUID.fastUUID().toString();
         OnebotFrame.Frame.Builder frameBuilder = OnebotFrame.Frame.newBuilder();
         frameBuilder.setEcho(echo);
@@ -28,19 +28,18 @@ public class ApiSender {
         frameBuilder.setOk(true);
         OnebotFrame.Frame build = frameBuilder.build();
         webSocket.write(Buffer.buffer(build.toByteArray()));
-        return null;
+        return echo;
     }
 
-    public OnebotApi.SendPrivateMsgResp sendPrivateMsg(ServerWebSocket session, Long botId, OnebotApi.SendPrivateMsgReq apiReq) {
-        return (OnebotApi.SendPrivateMsgResp) callApi(session, botId, apiReq);
+    public String sendPrivateMsg(ServerWebSocket session, Long botId, OnebotApi.SendPrivateMsgReq apiReq) {
+        return  callApi(session, botId, apiReq);
+    }
+
+    public String sendGroupMsg(ServerWebSocket session, Long botId, OnebotApi.SendGroupMsgReq apiReq) {
+        return  callApi(session, botId, apiReq);
     }
 
 
-    OnebotApi.SendGroupMsgResp sendGroupMsg(ServerWebSocket session, Long botId, OnebotApi.SendGroupMsgReq apiReq) {
-        return (OnebotApi.SendGroupMsgResp) callApi(session, botId, apiReq);
-    }
-//
-//
 //    OnebotApi.SendMsgResp sendMsg(ServerWebSocket session, Long botId, OnebotApi.SendMsgReq apiReq) {
 //        return callApi(session, botId, apiReq);
 //    }
