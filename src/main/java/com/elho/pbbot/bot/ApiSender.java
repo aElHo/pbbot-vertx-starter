@@ -1,42 +1,51 @@
 package com.elho.pbbot.bot;
 
 import cn.hutool.core.lang.UUID;
-import com.google.protobuf.MessageLiteOrBuilder;
+import cn.hutool.core.map.MapUtil;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.ServerWebSocket;
 import onebot.OnebotApi;
 import onebot.OnebotFrame;
+
+import java.util.Map;
 
 /**
  * @author zyf
  * @Date 2022-03-15
  */
 public class ApiSender {
+    public static Map<String, Object> echoMap = MapUtil.newConcurrentHashMap();
 
-    private String callApi(ServerWebSocket webSocket, Long botId, MessageLiteOrBuilder apiReq) {
+    public Future<OnebotApi.SendPrivateMsgResp> sendPrivateMsg(ServerWebSocket webSocket, Long botId, OnebotApi.SendPrivateMsgReq apiReq) {
         String echo = UUID.fastUUID().toString();
         OnebotFrame.Frame.Builder frameBuilder = OnebotFrame.Frame.newBuilder();
         frameBuilder.setEcho(echo);
         frameBuilder.setBotId(botId);
-        if (apiReq instanceof OnebotApi.SendPrivateMsgReq) {
-            frameBuilder.setSendPrivateMsgReq((OnebotApi.SendPrivateMsgReq) apiReq);
-            frameBuilder.setFrameType(OnebotFrame.Frame.FrameType.TSendPrivateMsgReq);
-        } else if (apiReq instanceof OnebotApi.SendGroupMsgReq) {
-            frameBuilder.setSendGroupMsgReq((OnebotApi.SendGroupMsgReq) apiReq);
-            frameBuilder.setFrameType(OnebotFrame.Frame.FrameType.TSendGroupMsgReq);
-        }
+        frameBuilder.setSendPrivateMsgReq(apiReq);
+        frameBuilder.setFrameType(OnebotFrame.Frame.FrameType.TSendPrivateMsgReq);
         frameBuilder.setOk(true);
         OnebotFrame.Frame build = frameBuilder.build();
         webSocket.write(Buffer.buffer(build.toByteArray()));
-        return echo;
+        Promise<OnebotApi.SendPrivateMsgResp> promise = Promise.promise();
+        echoMap.put(echo, promise);
+        return promise.future();
     }
 
-    public String sendPrivateMsg(ServerWebSocket session, Long botId, OnebotApi.SendPrivateMsgReq apiReq) {
-        return  callApi(session, botId, apiReq);
-    }
-
-    public String sendGroupMsg(ServerWebSocket session, Long botId, OnebotApi.SendGroupMsgReq apiReq) {
-        return  callApi(session, botId, apiReq);
+    public Future<OnebotApi.SendGroupMsgResp> sendGroupMsg(ServerWebSocket webSocket, Long botId, OnebotApi.SendGroupMsgReq apiReq) {
+        String echo = UUID.fastUUID().toString();
+        OnebotFrame.Frame.Builder frameBuilder = OnebotFrame.Frame.newBuilder();
+        frameBuilder.setEcho(echo);
+        frameBuilder.setBotId(botId);
+        frameBuilder.setSendGroupMsgReq(apiReq);
+        frameBuilder.setFrameType(OnebotFrame.Frame.FrameType.TSendGroupMsgReq);
+        frameBuilder.setOk(true);
+        OnebotFrame.Frame build = frameBuilder.build();
+        webSocket.write(Buffer.buffer(build.toByteArray()));
+        Promise<OnebotApi.SendGroupMsgResp> promise = Promise.promise();
+        echoMap.put(echo, promise);
+        return promise.future();
     }
 
 

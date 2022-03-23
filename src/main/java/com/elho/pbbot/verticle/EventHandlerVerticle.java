@@ -8,7 +8,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import onebot.OnebotFrame;
 
-import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * @author zyf
@@ -18,22 +18,22 @@ public class EventHandlerVerticle extends AbstractVerticle {
     @Override
     public void start() throws Exception {
         EventBus eventBus = vertx.eventBus();
-        eventBus.consumer(OnebotFrame.Frame.FrameType.TPrivateMessageEvent.name(),message->{
-            OnebotFrame.Frame frame = (OnebotFrame.Frame) message.body();
-            Bot bot = BotContainer.INSTANCE.getBot(frame.getBotId());
-            List<BotPlugin> plugins = PluginContainer.INSTANCE.getPlugins();
+        eventBus.<OnebotFrame.Frame>localConsumer(OnebotFrame.Frame.FrameType.TPrivateMessageEvent.name(), message -> {
+            OnebotFrame.Frame frame = message.body();
+            Bot bot = BotContainer.BOTS.get(frame.getBotId());
+            ConcurrentLinkedQueue<BotPlugin> plugins = PluginContainer.botPlugins;
             for (BotPlugin botPlugin : plugins) {
-                if(botPlugin.onPrivateMessage(bot, frame.getPrivateMessageEvent())==botPlugin.MESSAGE_BLOCK) {
+                if (botPlugin.onPrivateMessage(bot, frame.getPrivateMessageEvent()) == botPlugin.MESSAGE_BLOCK) {
                     break;
                 }
             }
         });
-        eventBus.consumer(OnebotFrame.Frame.FrameType.TGroupMessageEvent.name(),message->{
-            OnebotFrame.Frame frame = (OnebotFrame.Frame) message.body();
-            Bot bot = BotContainer.INSTANCE.getBot(frame.getBotId());
-            List<BotPlugin> plugins = PluginContainer.INSTANCE.getPlugins();
+        eventBus.<OnebotFrame.Frame>localConsumer(OnebotFrame.Frame.FrameType.TGroupMessageEvent.name(), message -> {
+            OnebotFrame.Frame frame = message.body();
+            Bot bot = BotContainer.BOTS.get(frame.getBotId());
+            ConcurrentLinkedQueue<BotPlugin> plugins = PluginContainer.botPlugins;
             for (BotPlugin botPlugin : plugins) {
-                if(botPlugin.onGroupMessage(bot, frame.getGroupMessageEvent())==botPlugin.MESSAGE_BLOCK) {
+                if (botPlugin.onGroupMessage(bot, frame.getGroupMessageEvent()) == botPlugin.MESSAGE_BLOCK) {
                     break;
                 }
             }

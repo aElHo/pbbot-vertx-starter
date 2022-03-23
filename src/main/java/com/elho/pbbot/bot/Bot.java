@@ -1,6 +1,7 @@
 package com.elho.pbbot.bot;
 
 import com.elho.pbbot.utils.Msg;
+import io.vertx.core.Future;
 import io.vertx.core.http.ServerWebSocket;
 import onebot.OnebotApi;
 
@@ -31,11 +32,11 @@ public class Bot {
         return apiSender;
     }
 
-    public String sendPrivateMsg(Long userId, String message, Boolean autoEscape) {
+    public Future<OnebotApi.SendPrivateMsgResp> sendPrivateMsg(Long userId, String message, Boolean autoEscape) {
         return this.sendPrivateMsg(userId, Msg.Builder().text(message).builder(), autoEscape);
     }
 
-    public String sendPrivateMsg(Long userId, Msg msg, Boolean autoEscape) {
+    public Future<OnebotApi.SendPrivateMsgResp> sendPrivateMsg(Long userId, Msg msg, Boolean autoEscape) {
         OnebotApi.SendPrivateMsgReq.Builder reqBuilder = OnebotApi.SendPrivateMsgReq.newBuilder();
         reqBuilder.setUserId(userId);
         reqBuilder.addAllMessage(msg.getMessageList());
@@ -44,11 +45,11 @@ public class Bot {
     }
 
 
-    public String sendGroupMsg(Long groupId, String message, Boolean autoEscape) {
+    public Future<OnebotApi.SendGroupMsgResp> sendGroupMsg(Long groupId, String message, Boolean autoEscape) {
         return sendGroupMsg(groupId, Msg.Builder().text(message).builder(), autoEscape);
     }
 
-    public String sendGroupMsg(Long groupId, Msg msg, Boolean autoEscape) {
+    public Future<OnebotApi.SendGroupMsgResp> sendGroupMsg(Long groupId, Msg msg, Boolean autoEscape) {
         OnebotApi.SendGroupMsgReq.Builder builder = OnebotApi.SendGroupMsgReq.newBuilder();
         builder.setGroupId(groupId);
         builder.addAllMessage(msg.getMessageList());

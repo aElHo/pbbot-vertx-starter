@@ -6,7 +6,6 @@ import com.elho.pbbot.utils.FrameCodes;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.MultiMap;
-import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.JsonObject;
@@ -26,26 +25,25 @@ public class SocketVerticle extends AbstractVerticle {
         JsonObject config = config();
         Integer port = config.getInteger("port", 8081);
         EventBus eventBus = vertx.eventBus();
-        eventBus.registerCodec(new FrameCodes());
+        eventBus.registerDefaultCodec(OnebotFrame.Frame.class, new FrameCodes());
         vertx.createHttpServer().webSocketHandler(websocket -> {
             MultiMap headers = websocket.headers();
             String selfId = headers.get("x-self-id");
             if ("/ws/cq/".equals(websocket.path()) && !"0".equals(selfId)) {
-                logger.info( "{} connected",selfId);
-                BotContainer.INSTANCE.addBot(Long.valueOf(selfId), createBot(selfId, websocket));
+                logger.info("{} connected", selfId);
+                BotContainer.BOTS.put(Long.valueOf(selfId), createBot(selfId, websocket));
                 websocket.handler(buffer -> {
                     try {
                         OnebotFrame.Frame frame = OnebotFrame.Frame.parseFrom(buffer.getBytes());
-                        DeliveryOptions options = new DeliveryOptions().setCodecName("FrameCodes");
-                        eventBus.publish(frame.getFrameType().name(),frame,options);
+                        eventBus.publish(frame.getFrameType().name(), frame);
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();
                     }
                 });
             }
             websocket.closeHandler(handle -> {
-                logger.info( "{} disconnected",selfId);
-                BotContainer.INSTANCE.removeBot(Long.valueOf(selfId));
+                logger.info("{} disconnected", selfId);
+                BotContainer.BOTS.remove(Long.valueOf(selfId));
             });
         }).listen(port, r -> logger.info("started on {}", port ));
     }

@@ -23,11 +23,11 @@ public class MainVerticle extends AbstractVerticle {
         ConfigRetrieverOptions options = new ConfigRetrieverOptions().addStore(fileStore);
         ConfigRetriever retriever = ConfigRetriever.create(vertx, options);
         retriever.getConfig(config -> {
-            DeploymentOptions deploymentOptions = new DeploymentOptions().setConfig(config.result()).setWorker(true);
-            vertx.deployVerticle(new SocketVerticle(), deploymentOptions);
-            vertx.deployVerticle(new EventHandlerVerticle(), deploymentOptions);
-            vertx.deployVerticle(new RespHandlerVerticle(),deploymentOptions);
-            vertx.deployVerticle(new LoadPluginVerticle(), deploymentOptions);
+            DeploymentOptions deploymentOptions = new DeploymentOptions().setConfig(config.result());
+            vertx.deployVerticle(new SocketVerticle(), deploymentOptions.setWorker(false));
+            vertx.deployVerticle(new EventHandlerVerticle(), deploymentOptions.setWorker(true));
+            vertx.deployVerticle(new RespHandlerVerticle(), deploymentOptions.setWorker(false));
+            vertx.deployVerticle(new LoadPluginVerticle(), deploymentOptions.setWorker(true));
         });
     }
 }

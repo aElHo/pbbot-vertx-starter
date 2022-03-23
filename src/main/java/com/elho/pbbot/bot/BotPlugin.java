@@ -1,14 +1,17 @@
 package com.elho.pbbot.bot;
 
 import onebot.OnebotEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author zyf
  * @Date 2022-03-15
  */
-public abstract class BotPlugin {
-    public final int MESSAGE_IGNORE = 0;
-    public final int MESSAGE_BLOCK = 0;
+public class BotPlugin {
+    public Logger logger = LoggerFactory.getLogger(getClass());
+    public static final int MESSAGE_IGNORE = 0;
+    public static final int MESSAGE_BLOCK = 0;
 
     public int onPrivateMessage(Bot bot, OnebotEvent.PrivateMessageEvent event) {
         return MESSAGE_IGNORE;

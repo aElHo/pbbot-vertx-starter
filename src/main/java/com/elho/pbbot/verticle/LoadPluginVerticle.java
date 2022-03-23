@@ -28,8 +28,8 @@ public class LoadPluginVerticle extends AbstractVerticle {
                 if(ClassLoaderUtil.isPresent(className)){
                     Class<? extends BotPlugin> aClass1 = ClassUtil.loadClass(className);
                     BotPlugin botPlugin = aClass1.newInstance();
-                    PluginContainer.INSTANCE.addPlugins(botPlugin);
-                    logger.info("{}加载成功",className);
+                    PluginContainer.botPlugins.add(botPlugin);
+                    logger.info("{}加载成功", className);
                 }else{
                     logger.info("{}不存在，跳过。",className);
                 }
