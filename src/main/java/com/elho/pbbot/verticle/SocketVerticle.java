@@ -45,7 +45,13 @@ public class SocketVerticle extends AbstractVerticle {
                 logger.info("{} disconnected", selfId);
                 BotContainer.BOTS.remove(Long.valueOf(selfId));
             });
-        }).listen(port, r -> logger.info("started on {}", port ));
+        }).listen(port, r -> {
+            if (r.succeeded()) {
+                logger.info("started on {}", port);
+            } else {
+                logger.info("Start failed , cause:{}", r.cause().getMessage());
+            }
+        });
     }
 
     private Bot createBot(String selfId, ServerWebSocket websocket) {
