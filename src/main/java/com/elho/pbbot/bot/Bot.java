@@ -13,9 +13,9 @@ import java.util.List;
  * @Date 2022-03-15
  */
 public class Bot {
-    private final Long selfId;
-    private final ServerWebSocket serverWebSocket;
-    private final ApiSender apiSender;
+    private Long selfId;
+    private ServerWebSocket serverWebSocket;
+    private ApiSender apiSender;
 
     public Bot(Long selfId, ServerWebSocket serverWebSocket) {
         this.selfId = selfId;
@@ -23,16 +23,7 @@ public class Bot {
         this.apiSender = new ApiSender();
     }
 
-    public Long getSelfId() {
-        return selfId;
-    }
-
-    public ServerWebSocket getServerWebSocket() {
-        return serverWebSocket;
-    }
-
-    public ApiSender getApiSender() {
-        return apiSender;
+    private Bot() {
     }
 
     /**
@@ -79,9 +70,9 @@ public class Bot {
      * @return 结果
      */
     public Future<OnebotApi.SendPrivateMsgResp> sendPrivateMsg(Long userId, List<OnebotBase.Message> messageList, boolean autoEscape) {
-        OnebotApi.SendPrivateMsgReq.Builder reqBuilder = OnebotApi.SendPrivateMsgReq.newBuilder();
-        reqBuilder.setUserId(userId).addAllMessage(messageList).setAutoEscape(autoEscape);
-        return apiSender.sendPrivateMsg(serverWebSocket, selfId, reqBuilder.build());
+        OnebotApi.SendPrivateMsgReq.Builder builder = OnebotApi.SendPrivateMsgReq.newBuilder();
+        builder.setUserId(userId).addAllMessage(messageList).setAutoEscape(autoEscape);
+        return apiSender.sendPrivateMsg(serverWebSocket, selfId, builder.build());
     }
 
     /**
@@ -185,195 +176,172 @@ public class Bot {
         return apiSender.setGroupBan(serverWebSocket, selfId, builder.build());
     }
 
-//    /**
-//     * 群组全员禁言
-//     *
-//     * @param group_id 群号
-//     * @param enable   是否禁言
-//     * @return 结果
-//     */
-//    public Future<setGroupWholeBan(group_id: Long, enable: boolean): SetGroupWholeBanResp? {
-//        val reqBuilder = SetGroupWholeBanReq.newBuilder()
-//        reqBuilder.groupId = group_id
-//        reqBuilder.enable = enable
-//        return apiSender.setGroupWholeBan(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * 设置群名片（群备注）
-//     *
-//     * @param group_id 群号
-//     * @param user_id  要设置的 QQ 号
-//     * @param card     群名片内容，不填或空字符串表示删除群名片
-//     * @return 结果
-//     */
-//    public Future<setGroupCard(group_id: Long, user_id: Long, card: String?): SetGroupCardResp? {
-//        val reqBuilder = SetGroupCardReq.newBuilder()
-//        reqBuilder.groupId = group_id
-//        reqBuilder.userId = user_id
-//        reqBuilder.card = card
-//        return apiSender.setGroupCard(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * @param group_id   群号
-//     * @param is_dismiss 是否解散，如果登录号是群主，则仅在此项为 true 时能够解散
-//     * @return 结果
-//     */
-//    public Future<setGroupLeave(group_id: Long, is_dismiss: boolean): SetGroupLeaveResp? {
-//        val reqBuilder = SetGroupLeaveReq.newBuilder()
-//        reqBuilder.groupId = group_id
-//        reqBuilder.isDismiss = is_dismiss
-//        return apiSender.setGroupLeave(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * 设置群组专属头衔
-//     *
-//     * @param group_id      群号
-//     * @param user_id       要设置的 QQ 号
-//     * @param special_title 专属头衔，不填或空字符串表示删除专属头衔
-//     * @param duration      专属头衔有效期，单位秒，-1 表示永久，不过此项似乎没有效果，可能是只有某些特殊的时间长度有效，有待测试
-//     * @return 结果
-//     */
-//    public Future<setGroupSpecialTitle(
-//        group_id: Long,
-//        user_id: Long,
-//        special_title: String?,
-//        duration: Long
-//    ): SetGroupSpecialTitleResp? {
-//        val reqBuilder = SetGroupSpecialTitleReq.newBuilder()
-//        reqBuilder.groupId = group_id
-//        reqBuilder.userId = user_id
-//        reqBuilder.specialTitle = special_title
-//        reqBuilder.duration = duration
-//        return apiSender.setGroupSpecialTitle(botSession, selfId, reqBuilder.build())
-//    }
-//
-//
-//    /**
-//     * 处理加好友请求
-//     *
-//     * @param flag    加好友请求的 flag（需从上报的数据中获得）
-//     * @param approve 是否同意请求
-//     * @param remark  添加后的好友备注（仅在同意时有效）
-//     * @return 结果
-//     */
-//    public Future<setFriendAddRequest(flag: String, approve: boolean, remark: String?): SetFriendAddRequestResp? {
-//        val reqBuilder = SetFriendAddRequestReq.newBuilder()
-//        reqBuilder.flag = flag
-//        reqBuilder.approve = approve
-//        reqBuilder.remark = remark
-//        return apiSender.setFriendAddRequest(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * 处理加群请求／邀请
-//     *
-//     * @param flag     加群请求的 flag（需从上报的数据中获得）
-//     * @param sub_type add 或 invite，请求类型（需要和上报消息中的 sub_type 字段相符）
-//     * @param approve  是否同意请求／邀请
-//     * @param reason   拒绝理由（仅在拒绝时有效）
-//     * @return 结果
-//     */
-//    public Future<setGroupAddRequest(
-//        flag: String,
-//        sub_type: String?,
-//        approve: boolean,
-//        reason: String?
-//    ): SetGroupAddRequestResp? {
-//        val reqBuilder = SetGroupAddRequestReq.newBuilder()
-//        reqBuilder.flag = flag
-//        reqBuilder.subType = sub_type
-//        reqBuilder.approve = approve
-//        reqBuilder.reason = reason
-//        return apiSender.setGroupAddRequest(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * 获取登录号信息
-//     *
-//     * @return 结果
-//     */
-//    public Future<getLoginInfo(): GetLoginInfoResp? {
-//        val reqBuilder = GetLoginInfoReq.newBuilder()
-//        return apiSender.getLoginInfo(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * 获取陌生人信息
-//     *
-//     * @param user_id   QQ号
-//     * @return 结果
-//     */
-//    public Future<getStrangerInfo(user_id: Long): GetStrangerInfoResp? {
-//        val reqBuilder = GetStrangerInfoReq.newBuilder()
-//        reqBuilder.userId = user_id
-//        return apiSender.getStrangerInfo(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * 获取好友列表
-//     *
-//     * @return 结果
-//     */
-//    public Future<getFriendList(): GetFriendListResp? {
-//        val reqBuilder = GetFriendListReq.newBuilder()
-//        return apiSender.getFriendList(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * 获取群列表
-//     *
-//     * @return 结果
-//     */
-//    public Future<getGroupList(): GetGroupListResp? {
-//        val reqBuilder = GetGroupListReq.newBuilder()
-//        return apiSender.getGroupList(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * 获取群信息
-//     *
-//     * @param group_id 群号
-//     * @param no_cache 是否不使用缓存（使用缓存可能更新不及时，但响应更快）
-//     * @return 结果
-//     */
-//    public Future<getGroupInfo(group_id: Long, no_cache: boolean): GetGroupInfoResp? {
-//        val reqBuilder = GetGroupInfoReq.newBuilder()
-//        reqBuilder.groupId = group_id
-//        reqBuilder.noCache = no_cache
-//        return apiSender.getGroupInfo(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * 获取群成员信息
-//     *
-//     * @param group_id 群号
-//     * @param user_id  QQ 号
-//     * @param no_cache 是否不使用缓存（使用缓存可能更新不及时，但响应更快）
-//     * @return 结果
-//     */
-//    public Future<getGroupMemberInfo(group_id: Long, user_id: Long, no_cache: boolean): GetGroupMemberInfoResp? {
-//        val reqBuilder = GetGroupMemberInfoReq.newBuilder()
-//        reqBuilder.groupId = group_id
-//        reqBuilder.userId = user_id
-//        reqBuilder.noCache = no_cache
-//        return apiSender.getGroupMemberInfo(botSession, selfId, reqBuilder.build())
-//    }
-//
-//    /**
-//     * 获取群成员列表
-//     *
-//     *
-//     * 响应内容为 JSON 数组，每个元素的内容和上面的 /get_group_member_info 接口相同，但对于同一个群组的同一个成员，获取列表时和获取单独的成员信息时，某些字段可能有所不同，例如 area、title 等字段在获取列表时无法获得，具体应以单独的成员信息为准。
-//     *
-//     * @param group_id 群号
-//     * @return 结果
-//     */
-//    public Future<getGroupMemberList(group_id: Long): GetGroupMemberListResp? {
-//        val reqBuilder = GetGroupMemberListReq.newBuilder()
-//        reqBuilder.groupId = group_id
-//        return apiSender.getGroupMemberList(botSession, selfId, reqBuilder.build())
-//    }
+    /**
+     * 群组全员禁言
+     *
+     * @param groupId 群号
+     * @param enable  是否禁言
+     * @return 结果
+     */
+    public Future<OnebotApi.SetGroupWholeBanResp> setGroupWholeBan(Long groupId, boolean enable) {
+        OnebotApi.SetGroupWholeBanReq.Builder builder = OnebotApi.SetGroupWholeBanReq.newBuilder();
+        builder.setGroupId(groupId).setEnable(enable);
+        return apiSender.setGroupWholeBan(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 设置群名片（群备注）
+     *
+     * @param groupId 群号
+     * @param userId  要设置的 QQ 号
+     * @param card    群名片内容，不填或空字符串表示删除群名片
+     * @return 结果
+     */
+    public Future<OnebotApi.SetGroupCardResp> setGroupCard(Long groupId, Long userId, String card) {
+        OnebotApi.SetGroupCardReq.Builder builder = OnebotApi.SetGroupCardReq.newBuilder();
+        builder.setGroupId(groupId).setUserId(userId).setCard(card);
+        return apiSender.setGroupCard(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 解散群组
+     *
+     * @param groupId   群号
+     * @param isDismiss 是否解散，如果登录号是群主，则仅在此项为 true 时能够解散
+     * @return 结果
+     */
+    public Future<OnebotApi.SetGroupLeaveResp> setGroupLeave(Long groupId, boolean isDismiss) {
+        OnebotApi.SetGroupLeaveReq.Builder builder = OnebotApi.SetGroupLeaveReq.newBuilder();
+        builder.setGroupId(groupId).setIsDismiss(isDismiss);
+        return apiSender.setGroupLeave(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 设置群组专属头衔
+     *
+     * @param groupId      群号
+     * @param userId       要设置的 QQ 号
+     * @param specialTitle 专属头衔，不填或空字符串表示删除专属头衔
+     * @param duration     专属头衔有效期，单位秒，-1 表示永久，不过此项似乎没有效果，可能是只有某些特殊的时间长度有效，有待测试
+     * @return 结果
+     */
+    public Future<OnebotApi.SetGroupSpecialTitleResp> setGroupSpecialTitle(Long groupId, Long userId, String specialTitle, Long duration) {
+        OnebotApi.SetGroupSpecialTitleReq.Builder builder = OnebotApi.SetGroupSpecialTitleReq.newBuilder();
+        builder.setGroupId(groupId).setUserId(userId).setSpecialTitle(specialTitle).setDuration(duration);
+        return apiSender.setGroupSpecialTitle(serverWebSocket, selfId, builder.build());
+    }
+
+
+    /**
+     * 处理加好友请求
+     *
+     * @param flag    加好友请求的 flag（需从上报的数据中获得）
+     * @param approve 是否同意请求
+     * @param remark  添加后的好友备注（仅在同意时有效）
+     * @return 结果
+     */
+    public Future<OnebotApi.SetFriendAddRequestResp> setFriendAddRequest(String flag, boolean approve, String remark) {
+        OnebotApi.SetFriendAddRequestReq.Builder builder = OnebotApi.SetFriendAddRequestReq.newBuilder();
+        builder.setFlag(flag).setApprove(approve).setRemark(remark);
+        return apiSender.setFriendAddRequest(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 处理加群请求／邀请
+     *
+     * @param flag    加群请求的 flag（需从上报的数据中获得）
+     * @param subType add 或 invite，请求类型（需要和上报消息中的 subType 字段相符）
+     * @param approve 是否同意请求／邀请
+     * @param reason  拒绝理由（仅在拒绝时有效）
+     * @return 结果
+     */
+    public Future<OnebotApi.SetGroupAddRequestResp> setGroupAddRequest(String flag, String subType, boolean approve, String reason) {
+        OnebotApi.SetGroupAddRequestReq.Builder builder = OnebotApi.SetGroupAddRequestReq.newBuilder();
+        builder.setFlag(flag).setSubType(subType).setApprove(approve).setReason(reason);
+        return apiSender.setGroupAddRequest(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 获取登录号信息
+     *
+     * @return 结果
+     */
+    public Future<OnebotApi.GetLoginInfoResp> getLoginInfo() {
+        OnebotApi.GetLoginInfoReq.Builder builder = OnebotApi.GetLoginInfoReq.newBuilder();
+        return apiSender.getLoginInfo(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 获取陌生人信息
+     *
+     * @param userId QQ号
+     * @return 结果
+     */
+    public Future<OnebotApi.GetStrangerInfoResp> getStrangerInfo(Long userId) {
+        OnebotApi.GetStrangerInfoReq.Builder builder = OnebotApi.GetStrangerInfoReq.newBuilder();
+        builder.setUserId(userId);
+        return apiSender.getStrangerInfo(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 获取好友列表
+     *
+     * @return 结果
+     */
+    public Future<OnebotApi.GetFriendListResp> getFriendList() {
+        OnebotApi.GetFriendListReq.Builder builder = OnebotApi.GetFriendListReq.newBuilder();
+        return apiSender.getFriendList(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 获取群列表
+     *
+     * @return 结果
+     */
+    public Future<OnebotApi.GetGroupListResp> getGroupList() {
+        OnebotApi.GetGroupListReq.Builder builder = OnebotApi.GetGroupListReq.newBuilder();
+        return apiSender.getGroupList(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 获取群信息
+     *
+     * @param groupId 群号
+     * @param noCache 是否不使用缓存（使用缓存可能更新不及时，但响应更快）
+     * @return 结果
+     */
+    public Future<OnebotApi.GetGroupInfoResp> getGroupInfo(Long groupId, boolean noCache) {
+        OnebotApi.GetGroupInfoReq.Builder builder = OnebotApi.GetGroupInfoReq.newBuilder();
+        builder.setGroupId(groupId).setNoCache(noCache);
+        return apiSender.getGroupInfo(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 获取群成员信息
+     *
+     * @param groupId 群号
+     * @param userId  QQ 号
+     * @param noCache 是否不使用缓存（使用缓存可能更新不及时，但响应更快）
+     * @return 结果
+     */
+    public Future<OnebotApi.GetGroupMemberInfoResp> getGroupMemberInfo(Long groupId, Long userId, boolean noCache) {
+        OnebotApi.GetGroupMemberInfoReq.Builder builder = OnebotApi.GetGroupMemberInfoReq.newBuilder();
+        builder.setGroupId(groupId).setUserId(userId).setNoCache(noCache);
+        return apiSender.getGroupMemberInfo(serverWebSocket, selfId, builder.build());
+    }
+
+    /**
+     * 获取群成员列表
+     * <p>
+     * <p>
+     * 响应内容为 JSON 数组，每个元素的内容和上面的 /get_group_member_info 接口相同，但对于同一个群组的同一个成员，获取列表时和获取单独的成员信息时，某些字段可能有所不同，例如 area、title 等字段在获取列表时无法获得，具体应以单独的成员信息为准。
+     *
+     * @param groupId 群号
+     * @return 结果
+     */
+    public Future<OnebotApi.GetGroupMemberListResp> getGroupMemberList(Long groupId) {
+        OnebotApi.GetGroupMemberListReq.Builder builder = OnebotApi.GetGroupMemberListReq.newBuilder();
+        builder.setGroupId(groupId);
+        return apiSender.getGroupMemberList(serverWebSocket, selfId, builder.build());
+    }
 }
