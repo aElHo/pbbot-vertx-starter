@@ -16,54 +16,60 @@ import java.util.Map;
  * @Date 2022-03-15
  */
 public class ApiSender {
-    public static Map<String, Object> echoMap = MapUtil.newConcurrentHashMap();
+    public static final Map<String, Object> ECHO_MAP = MapUtil.newConcurrentHashMap();
 
     public Future<OnebotApi.SendPrivateMsgResp> sendPrivateMsg(ServerWebSocket webSocket, Long botId, OnebotApi.SendPrivateMsgReq apiReq) {
         String echo = UUID.fastUUID().toString();
-        OnebotFrame.Frame.Builder frameBuilder = OnebotFrame.Frame.newBuilder();
-        frameBuilder.setEcho(echo);
-        frameBuilder.setBotId(botId);
-        frameBuilder.setSendPrivateMsgReq(apiReq);
-        frameBuilder.setFrameType(OnebotFrame.Frame.FrameType.TSendPrivateMsgReq);
-        frameBuilder.setOk(true);
-        OnebotFrame.Frame build = frameBuilder.build();
+        OnebotFrame.Frame build = OnebotFrame.Frame.newBuilder().setEcho(echo).setBotId(botId).setSendPrivateMsgReq(apiReq)
+            .setFrameType(OnebotFrame.Frame.FrameType.TSendPrivateMsgReq).setOk(true).build();
         webSocket.write(Buffer.buffer(build.toByteArray()));
         Promise<OnebotApi.SendPrivateMsgResp> promise = Promise.promise();
-        echoMap.put(echo, promise);
+        ECHO_MAP.put(echo, promise);
         return promise.future();
     }
 
     public Future<OnebotApi.SendGroupMsgResp> sendGroupMsg(ServerWebSocket webSocket, Long botId, OnebotApi.SendGroupMsgReq apiReq) {
         String echo = UUID.fastUUID().toString();
-        OnebotFrame.Frame.Builder frameBuilder = OnebotFrame.Frame.newBuilder();
-        frameBuilder.setEcho(echo);
-        frameBuilder.setBotId(botId);
-        frameBuilder.setSendGroupMsgReq(apiReq);
-        frameBuilder.setFrameType(OnebotFrame.Frame.FrameType.TSendGroupMsgReq);
-        frameBuilder.setOk(true);
-        OnebotFrame.Frame build = frameBuilder.build();
+        OnebotFrame.Frame build = OnebotFrame.Frame.newBuilder().setEcho(echo).setBotId(botId).setSendGroupMsgReq(apiReq)
+            .setFrameType(OnebotFrame.Frame.FrameType.TSendGroupMsgReq).setOk(true).build();
         webSocket.write(Buffer.buffer(build.toByteArray()));
         Promise<OnebotApi.SendGroupMsgResp> promise = Promise.promise();
-        echoMap.put(echo, promise);
+        ECHO_MAP.put(echo, promise);
+        return promise.future();
+    }
+
+    public Future<OnebotApi.DeleteMsgResp> deleteMsg(ServerWebSocket webSocket, Long botId, OnebotApi.DeleteMsgReq apiReq) {
+        String echo = UUID.fastUUID().toString();
+        OnebotFrame.Frame build = OnebotFrame.Frame.newBuilder().setEcho(echo).setBotId(botId)
+            .setDeleteMsgReq(apiReq).setFrameType(OnebotFrame.Frame.FrameType.TDeleteMsgReq).setOk(true).build();
+        webSocket.write(Buffer.buffer(build.toByteArray()));
+        Promise<OnebotApi.DeleteMsgResp> promise = Promise.promise();
+        ECHO_MAP.put(echo, promise);
         return promise.future();
     }
 
 
-//    OnebotApi.SendMsgResp sendMsg(ServerWebSocket session, Long botId, OnebotApi.SendMsgReq apiReq) {
-//        return callApi(session, botId, apiReq);
-//    }
-//
-//
-//    OnebotApi.DeleteMsgResp deleteMsg(ServerWebSocket session, Long botId, OnebotApi.DeleteMsgReq apiReq) {
-//        return callApi(session, botId, apiReq);
-//    }
-//
-//
-//    OnebotApi.GetMsgResp getMsg(ServerWebSocket session, Long botId, OnebotApi.GetMsgReq apiReq) {
-//        return callApi(session, botId, apiReq);
-//    }
-//
-//    OnebotApi.GetForwardMsgResp getForwardMsg(ServerWebSocket session, Long botId, OnebotApi.GetForwardMsgReq apiReq) {
+    Future<OnebotApi.SendMsgResp> sendMsg(ServerWebSocket session, Long botId, OnebotApi.SendMsgReq apiReq) {
+        String echo = UUID.fastUUID().toString();
+        OnebotFrame.Frame build = OnebotFrame.Frame.newBuilder().setEcho(echo).setBotId(botId)
+            .setSendMsgReq(apiReq).setFrameType(OnebotFrame.Frame.FrameType.TSendMsgReq).setOk(true).build();
+        session.write(Buffer.buffer(build.toByteArray()));
+        Promise<OnebotApi.SendMsgResp> promise = Promise.promise();
+        ECHO_MAP.put(echo, promise);
+        return promise.future();
+    }
+
+    Future<OnebotApi.GetMsgResp> getMsg(ServerWebSocket session, Long botId, OnebotApi.GetMsgReq apiReq) {
+        String echo = UUID.fastUUID().toString();
+        OnebotFrame.Frame build = OnebotFrame.Frame.newBuilder().setEcho(echo).setBotId(botId)
+            .setGetMsgReq(apiReq).setFrameType(OnebotFrame.Frame.FrameType.TGetMsgReq).setOk(true).build();
+        session.write(Buffer.buffer(build.toByteArray()));
+        Promise<OnebotApi.GetMsgResp> promise = Promise.promise();
+        ECHO_MAP.put(echo, promise);
+        return promise.future();
+    }
+
+    //    OnebotApi.GetForwardMsgResp getForwardMsg(ServerWebSocket session, Long botId, OnebotApi.GetForwardMsgReq apiReq) {
 //        return callApi(session, botId, apiReq);
 //    }
 //
@@ -71,13 +77,25 @@ public class ApiSender {
 //        return callApi(session, botId, apiReq);
 //    }
 //
-//    OnebotApi.SetGroupKickResp setGroupKick(ServerWebSocket session, Long botId, OnebotApi.SetGroupKickReq apiReq) {
-//        return callApi(session, botId, apiReq);
-//    }
-//
-//   OnebotApi.SetGroupBanResp setGroupBan(ServerWebSocket session, Long botId, OnebotApi.SetGroupBanReq apiReq) {
-//        return callApi(session, botId, apiReq);
-//    }
+    Future<OnebotApi.SetGroupKickResp> setGroupKick(ServerWebSocket session, Long botId, OnebotApi.SetGroupKickReq apiReq) {
+        String echo = UUID.fastUUID().toString();
+        OnebotFrame.Frame build = OnebotFrame.Frame.newBuilder().setEcho(echo).setBotId(botId)
+            .setSetGroupKickReq(apiReq).setFrameType(OnebotFrame.Frame.FrameType.TSetGroupKickReq).setOk(true).build();
+        session.write(Buffer.buffer(build.toByteArray()));
+        Promise<OnebotApi.SetGroupKickResp> promise = Promise.promise();
+        ECHO_MAP.put(echo, promise);
+        return promise.future();
+    }
+
+    Future<OnebotApi.SetGroupBanResp> setGroupBan(ServerWebSocket session, Long botId, OnebotApi.SetGroupBanReq apiReq) {
+        String echo = UUID.fastUUID().toString();
+        OnebotFrame.Frame build = OnebotFrame.Frame.newBuilder().setEcho(echo).setBotId(botId)
+            .setSetGroupBanReq(apiReq).setFrameType(OnebotFrame.Frame.FrameType.TSetGroupBanReq).setOk(true).build();
+        session.write(Buffer.buffer(build.toByteArray()));
+        Promise<OnebotApi.SetGroupBanResp> promise = Promise.promise();
+        ECHO_MAP.put(echo, promise);
+        return promise.future();
+    }
 //
 //    OnebotApi.SetGroupAnonymousBanResp setGroupAnonymousBan(ServerWebSocket session, Long botId, OnebotApi.SetGroupAnonymousBanReq apiReq) {
 //        return callApi(session, botId, apiReq);
