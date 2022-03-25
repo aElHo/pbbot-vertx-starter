@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BotPlugin {
     public Logger logger = LoggerFactory.getLogger(getClass());
-    public static final int MESSAGE_IGNORE = 0;
+    public static final int MESSAGE_IGNORE = 1;
     public static final int MESSAGE_BLOCK = 0;
 
     public int onPrivateMessage(Bot bot, OnebotEvent.PrivateMessageEvent event) {

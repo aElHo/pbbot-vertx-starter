@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
 /**
  * @author yf.zhuang
  */
-public class MainVerticle extends AbstractVerticle {
-    Logger logger = LoggerFactory.getLogger(MainVerticle.class);
+public class BotVerticle extends AbstractVerticle {
+    Logger logger = LoggerFactory.getLogger(BotVerticle.class);
 
     @Override
     public void start() {
@@ -30,13 +30,14 @@ public class MainVerticle extends AbstractVerticle {
         retriever.getConfig(config -> {
             DeploymentOptions deploymentOptions = new DeploymentOptions().setConfig(config.result());
             vertx.deployVerticle(new SocketVerticle(), deploymentOptions);
-            vertx.deployVerticle(new EventHandlerVerticle(), deploymentOptions);
             loadPlugin(config.result());
         });
+        vertx.deployVerticle(new EventHandlerVerticle());
     }
 
     private void loadPlugin(JsonObject result) {
         JsonArray jsonArray = result.getJsonArray("plugin");
+        PluginContainer.botPlugins.clear();
         for (int i = 0; i < jsonArray.size(); i++) {
             String className = jsonArray.getString(i);
             try {
