@@ -12,11 +12,10 @@
 - pom.xml
 
 ```xml
-
 <dependency>
-    <groupId>com.elho</groupId>
+    <groupId>io.github.aelho</groupId>
     <artifactId>pbbot-vertx-starter</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.0.1</version>
 </dependency>
 ```
 
