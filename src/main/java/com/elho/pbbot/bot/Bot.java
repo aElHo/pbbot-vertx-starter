@@ -130,7 +130,7 @@ public class Bot {
      * @param messageId 消息ID
      * @return 结果
      */
-    public Future<OnebotApi.DeleteMsgResp> deleteMsg(int messageId) {
+    public Future<OnebotApi.DeleteMsgResp> deleteMsg(OnebotBase.MessageReceipt messageId) {
         OnebotApi.DeleteMsgReq.Builder builder = OnebotApi.DeleteMsgReq.newBuilder();
         builder.setMessageId(messageId);
         return apiSender.deleteMsg(serverWebSocket, selfId, builder.build());
