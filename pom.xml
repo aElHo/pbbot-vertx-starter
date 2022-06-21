@@ -6,8 +6,7 @@
 
     <groupId>io.github.aelho</groupId>
     <artifactId>pbbot-vertx-starter</artifactId>
-    <version>0.0.3</version>
-
+    <version>0.0.5</version>
     <name>pbbot-vertx-starter</name>
     <url>https://github.com/aElHo/pbbot-vertx-starter</url>
     <description>A vert.x starter for qq bot development.</description>
@@ -166,6 +165,12 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-config</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>vertx-core</artifactId>
+                    <groupId>io.vertx</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- protobuf -->
         <dependency>
@@ -210,26 +215,48 @@
             <extension>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>os-maven-plugin</artifactId>
-                <version>1.5.0.Final</version>
+                <version>1.4.1.Final</version>
             </extension>
         </extensions>
         <plugins>
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.5.0</version>
+                <version>0.6.1</version>
                 <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+                    <!--suppress UnresolvedMavenProperty -->
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}
                     </protocArtifact>
                     <pluginId>grpc-java</pluginId>
+                    <!--suppress UnresolvedMavenProperty -->
                     <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
                     </pluginArtifact>
+                    <protocPlugins>
+                        <protocPlugin>
+                            <id>vertx-grpc-protoc-plugin</id>
+                            <groupId>io.vertx</groupId>
+                            <artifactId>vertx-grpc-protoc-plugin</artifactId>
+                            <version>4.3.1</version>
+                            <mainClass>io.vertx.grpc.protoc.plugin.VertxGrpcGenerator</mainClass>
+                        </protocPlugin>
+                    </protocPlugins>
                 </configuration>
                 <executions>
                     <execution>
+                        <id>compile</id>
+                        <configuration>
+                            <clearOutputDirectory>false</clearOutputDirectory>
+                        </configuration>
                         <goals>
                             <goal>compile</goal>
                             <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                            <goal>test-compile-custom</goal>
                         </goals>
                     </execution>
                 </executions>
