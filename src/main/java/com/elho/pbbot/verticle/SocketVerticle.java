@@ -2,13 +2,13 @@ package com.elho.pbbot.verticle;
 
 import com.elho.pbbot.bot.Bot;
 import com.elho.pbbot.bot.BotContainer;
+import com.elho.pbbot.utils.ConfigUtil;
 import com.elho.pbbot.utils.FrameCodes;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.MultiMap;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.ServerWebSocket;
-import io.vertx.core.json.JsonObject;
 import onebot.OnebotFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +22,7 @@ public class SocketVerticle extends AbstractVerticle {
 
     @Override
     public void start() throws Exception {
-        JsonObject config = config();
-        Integer port = config.getInteger("port", 8081);
+        Integer port = ConfigUtil.getInteger("port", 8081);
         EventBus eventBus = vertx.eventBus();
         eventBus.registerDefaultCodec(OnebotFrame.Frame.class, new FrameCodes());
         vertx.createHttpServer().webSocketHandler(websocket -> {

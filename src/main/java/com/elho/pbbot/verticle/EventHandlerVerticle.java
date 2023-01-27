@@ -4,7 +4,7 @@ import com.elho.pbbot.bot.ApiSender;
 import com.elho.pbbot.bot.Bot;
 import com.elho.pbbot.bot.BotContainer;
 import com.elho.pbbot.bot.BotPlugin;
-import com.elho.pbbot.bot.PluginContainer;
+import com.elho.pbbot.plugin.PluginContainer;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.EventBus;

@@ -1,4 +1,6 @@
-package com.elho.pbbot.bot;
+package com.elho.pbbot.plugin;
+
+import com.elho.pbbot.bot.BotPlugin;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -9,5 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class PluginContainer {
 
     public static ConcurrentLinkedQueue<BotPlugin> botPlugins = new ConcurrentLinkedQueue<>();
+
+
 
 }

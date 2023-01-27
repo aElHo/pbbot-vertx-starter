@@ -20,10 +20,7 @@ public class Bot {
     public Bot(Long selfId, ServerWebSocket serverWebSocket) {
         this.selfId = selfId;
         this.serverWebSocket = serverWebSocket;
-        this.apiSender = new ApiSender();
-    }
-
-    private Bot() {
+        this.apiSender = ApiSender.INSTANCE;
     }
 
     /**

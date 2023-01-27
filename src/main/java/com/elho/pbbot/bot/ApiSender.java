@@ -15,7 +15,8 @@ import java.util.Map;
  * @author zyf
  * @Date 2022-03-15
  */
-public class ApiSender {
+public enum ApiSender {
+    INSTANCE;
     public static final Map<String, Object> ECHO_MAP = MapUtil.newConcurrentHashMap();
 
     public Future<OnebotApi.SendPrivateMsgResp> sendPrivateMsg(ServerWebSocket webSocket, Long botId, OnebotApi.SendPrivateMsgReq apiReq) {
